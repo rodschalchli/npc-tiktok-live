@@ -31,7 +31,6 @@
 </main>
 <div class="note"><b>Antes de monetizar:</b> esta página ya incluye personaje 3D procedural y controles de prueba, pero no está conectada a TikTok LIVE. Para reaccionar a regalos reales se necesita un conector de eventos compatible, pruebas con la cuenta y cumplir las reglas de TikTok. No introduzcas contraseñas ni cookies de TikTok en esta página.</div>
 <div class="footer">Prototipo web · Three.js · El navegador necesita conexión a internet para cargar el motor 3D.</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (()=>{
 const $=id=>document.getElementById(id);
@@ -43,7 +42,7 @@ const colors=[
  {main:0x422d68,dark:0x15132c,glow:0xff35b5,eye:0xff4d9d,accent:0x9d5aff},
  {main:0x26275f,dark:0x080f2c,glow:0x52e9ff,eye:0xc18bff,accent:0xff5ef1}
 ];
-let scene,camera,renderer,root,head,body,armL,armR,legL,legR,eyes=[],rings=[],particles=[],core,form=0,action='idle',actionUntil=0,last=0,clock=new THREE.Clock();
+let scene,camera,renderer,root,head,body,armL,armR,legL,legR,eyes=[],rings=[],particles=[],core,form=0,action='idle',actionUntil=0,last=0,clock=null;
 const status=$('status');
 function mat(color,metalness=.55,roughness=.3,emissive=0,ei=0){return new THREE.MeshStandardMaterial({color,metalness,roughness,emissive,emissiveIntensity:ei})}
 function mesh(geo,material,parent,x=0,y=0,z=0){const m=new THREE.Mesh(geo,material);m.position.set(x,y,z);parent.add(m);return m}
@@ -109,8 +108,9 @@ function buildCharacter(){
  root.position.y=-.1;
 }
 function init(){
- if(!window.THREE){status.textContent='No cargó Three.js';$('speechBubble').textContent='Revisa tu conexión a internet y recarga.';return}
+ if(!window.THREE){status.textContent='No cargó el motor 3D';$('speechBubble').textContent='No se pudo cargar el motor 3D. Revisa la conexión y recarga la página.';log('Three.js no está disponible.');return}
  try{
+ clock=new THREE.Clock();
  scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x050b16,.045);
  camera=new THREE.PerspectiveCamera(34,1,.1,100);camera.position.set(0,1.1,7.6);camera.lookAt(0,.15,0);
  renderer=new THREE.WebGLRenderer({canvas:$('scene'),alpha:true,antialias:false,powerPreference:'low-power'});
@@ -166,7 +166,21 @@ $('salute').onclick=()=>setAction('salute');$('dance').onclick=()=>setAction('da
 $('reset').onclick=()=>{setForm(0);action='idle';root.scale.setScalar(1);say('Sistema reiniciado. ¡Listo para el siguiente regalo!')};
 $('clearLog').onclick=()=>$('log').replaceChildren();
 window.addEventListener('resize',onResize);
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+function loadThree(urls,index=0){
+ if(window.THREE){init();return}
+ if(index>=urls.length){status.textContent='No se pudo cargar el motor 3D';$('speechBubble').textContent='El navegador no pudo descargar el motor 3D. Comprueba internet y recarga.';log('Fallaron los servidores del motor 3D.');return}
+ status.textContent='Cargando motor 3D… ('+(index+1)+'/'+urls.length+')';
+ const script=document.createElement('script');script.src=urls[index];script.async=true;
+ script.onload=()=>{if(window.THREE)init();else loadThree(urls,index+1)};
+ script.onerror=()=>{script.remove();loadThree(urls,index+1)};
+ document.head.appendChild(script);
+ }
+const threeCDNs=[
+ 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',
+ 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js',
+ 'https://unpkg.com/three@0.128.0/build/three.min.js'
+];
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>loadThree(threeCDNs));else loadThree(threeCDNs);
 })();
 </script>
 </body></html>
