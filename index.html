@@ -1,132 +1,172 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NPC Loco LIVE — Prototipo</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050b16">
+<title>NEBULA NPC LIVE · 3D</title>
 <style>
-:root{--pink:#ff4fb8;--cyan:#59f3ff;--bg:#090b18;--panel:#171a2d}
-*{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;background:var(--bg);color:#fff;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-body{overflow:auto}
-.stage{position:relative;min-height:100vh;min-height:100svh;width:100%;max-width:560px;margin:auto;overflow:hidden;display:flex;flex-direction:column;align-items:center;padding:22px 18px 24px;background:radial-gradient(ellipse at 50% 36%,#35245f 0,#171b3a 35%,#090b18 75%)}
-.stage:before,.stage:after{content:"";position:absolute;border:1px solid #ffffff18;border-radius:50%;width:320px;height:320px;top:22%;left:50%;transform:translateX(-50%);box-shadow:0 0 45px #ff4fb81a,inset 0 0 45px #59f3ff0d;pointer-events:none}
-.stage:after{width:410px;height:410px;top:18%}
-.top{z-index:2;width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.brand{font-size:12px;letter-spacing:.22em;font-weight:900;color:var(--cyan)}
-.live{font-size:11px;font-weight:900;letter-spacing:.12em;border:1px solid #ff4f7d80;color:#ff7798;border-radius:99px;padding:7px 10px;background:#ff4f7d12}
-h1{z-index:2;font-size:clamp(24px,6vw,34px);line-height:1.05;text-align:center;margin:28px 0 4px;text-transform:uppercase;letter-spacing:.035em;text-shadow:0 0 24px #ff4fb84a}
-.sub{z-index:2;margin:0;color:#b8bdd9;font-size:12px;text-align:center}
-.avatar-zone{position:relative;z-index:2;width:min(100%,360px);height:390px;display:flex;align-items:center;justify-content:center;margin:4px 0 0}
-.platform{position:absolute;width:210px;height:45px;bottom:19px;border-radius:50%;background:radial-gradient(ellipse,#59f3ff5e,#7b4dff2c 50%,transparent 72%);filter:blur(2px)}
-.avatar{position:relative;width:220px;height:285px;filter:drop-shadow(0 18px 20px #0008);animation:float 2.8s ease-in-out infinite}
-.halo{position:absolute;width:245px;height:245px;border-radius:50%;top:15px;left:50%;transform:translateX(-50%);border:2px solid #59f3ff35;box-shadow:0 0 35px #59f3ff1a,inset 0 0 35px #ff4fb81b}
-.antenna{position:absolute;width:7px;height:28px;left:calc(50% - 3px);top:0;background:linear-gradient(#c9fbff,#59f3ff);border-radius:5px}
-.antenna:before{content:"";position:absolute;width:17px;height:17px;border-radius:50%;background:radial-gradient(circle at 30% 25%,white,#59f3ff 45%,#5a68ff);top:-11px;left:-5px;box-shadow:0 0 17px #59f3ff}
-.head{position:absolute;top:24px;left:22px;width:176px;height:148px;border-radius:43% 43% 40% 40%;background:linear-gradient(140deg,#f9ffff 0%,#a7c9e8 22%,#6479ad 49%,#3b3b78 76%,#24264e 100%);border:3px solid #d3ffff;box-shadow:inset 7px 7px 12px #fff8,inset -8px -10px 15px #111a49,0 0 22px #59f3ff40}
-.ear{position:absolute;top:74px;width:26px;height:43px;border-radius:10px;background:linear-gradient(90deg,#313d72,#b4eaff,#5365a2);border:2px solid #baf8ff}
-.ear.left{left:4px}.ear.right{right:4px}
-.face{position:absolute;inset:0}
-.eye{position:absolute;top:53px;width:34px;height:42px;border-radius:48%;background:linear-gradient(180deg,#171b36,#050713);border:3px solid #d9ffff;box-shadow:0 0 12px #59f3ff7a;overflow:hidden}
-.eye:after{content:"";position:absolute;width:10px;height:12px;top:5px;left:7px;border-radius:50%;background:#fff}
-.eye.left{left:30px}.eye.right{right:30px}
-.cheek{position:absolute;top:105px;width:24px;height:9px;border-radius:50%;background:#ff75c4;filter:blur(4px);opacity:.85}
-.cheek.left{left:19px}.cheek.right{right:19px}
-.mouth{position:absolute;top:105px;left:50%;transform:translateX(-50%);width:39px;height:19px;border-radius:5px 5px 20px 20px;background:#17142d;border:3px solid #a9fbff;box-shadow:0 0 8px #59f3ff6b;transition:all .15s}
-.mouth.talk{height:31px;width:30px;border-radius:45%;background:linear-gradient(#29132c,#ff4fb8);animation:talk .18s infinite alternate}
-.neck{position:absolute;top:160px;left:89px;width:42px;height:28px;background:linear-gradient(90deg,#303a70,#b9f8ff,#4c5795);border-radius:8px}
-.bodybot{position:absolute;top:177px;left:30px;width:160px;height:100px;border-radius:35px 35px 28px 28px;background:linear-gradient(135deg,#efffff,#8baedc 23%,#59649e 55%,#282b59 100%);border:3px solid #bffaff;box-shadow:inset 7px 6px 12px #fff8,inset -7px -8px 14px #10163e}
-.chest{position:absolute;left:50%;top:22px;transform:translateX(-50%);width:60px;height:40px;border-radius:12px;background:linear-gradient(135deg,#20284e,#101328);border:2px solid #8af8ff;box-shadow:0 0 12px #59f3ff55;display:grid;place-items:center;color:var(--cyan);font-size:18px}
-.arm{position:absolute;top:193px;width:35px;height:77px;border-radius:18px;background:linear-gradient(90deg,#3e4d85,#c6ffff,#6373a7);border:2px solid #baf8ff;transform-origin:top center}
-.arm.left{left:4px;transform:rotate(17deg)}.arm.right{right:4px;transform:rotate(-17deg)}
-.avatar.dance{animation:dance .35s infinite alternate}
-.avatar.shock .head{transform:translateY(-13px) scale(1.05)}
-.avatar.shock .eye{height:49px;width:39px}
-.avatar.mad .head{filter:hue-rotate(300deg) saturate(1.6)}
-.avatar.mad .eye{transform:rotate(18deg)}
-.speech{z-index:3;min-height:62px;width:100%;max-width:410px;display:flex;align-items:center;justify-content:center;text-align:center;padding:13px 16px;border-radius:17px;background:linear-gradient(135deg,#ffffff12,#ffffff08);border:1px solid #ffffff24;box-shadow:0 10px 35px #0002;font-size:clamp(16px,4vw,20px);font-weight:800}
-.status{z-index:3;margin:9px 0 15px;color:#aeb6d8;font-size:11px;text-align:center}
-.controls{z-index:3;width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-button{font:inherit;cursor:pointer;border:0;color:white;border-radius:13px;padding:13px 10px;font-weight:800;background:linear-gradient(135deg,#ff4fb8,#9c58ff);box-shadow:0 6px 20px #8b42ff25}
-button.secondary{background:#ffffff10;border:1px solid #ffffff25;box-shadow:none}
-button:active{transform:scale(.98)}
-.note{z-index:3;margin:16px 0 0;font-size:10px;line-height:1.5;text-align:center;color:#7f87aa;max-width:380px}
-@keyframes float{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-9px) rotate(1deg)}}
-@keyframes talk{from{transform:translateX(-50%) scaleY(.65)}to{transform:translateX(-50%) scaleY(1.15)}}
-@keyframes dance{from{transform:rotate(-8deg) translateY(-2px)}to{transform:rotate(8deg) translateY(-10px)}}
-@media(min-height:850px){.avatar-zone{height:430px}.avatar{transform:scale(1.08)}}
+:root{--bg:#050b16;--panel:#0b1425;--line:#1b3555;--cyan:#39d8ff;--violet:#a66cff;--pink:#ff4fb8;--text:#eaf5ff;--muted:#91a9c4}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#102b4b 0%,var(--bg) 55%);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:1px solid #285078;background:#10243c;color:var(--text);border-radius:12px;padding:10px 12px;font-weight:650}button:hover{border-color:var(--cyan)}button.primary{background:linear-gradient(120deg,#087fa7,#6343bb);border:0}button.active{outline:2px solid var(--cyan)}header{padding:18px 16px 12px;max-width:1200px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}h1{font-size:clamp(20px,4vw,30px);margin:0;letter-spacing:.04em}header p{margin:4px 0 0;color:var(--muted)}.tag{font-size:11px;color:#9beeff;border:1px solid #24536c;padding:6px 9px;border-radius:99px;white-space:nowrap}.layout{max-width:1200px;margin:auto;padding:0 14px 24px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(300px,.7fr);gap:14px}.panel{border:1px solid var(--line);background:linear-gradient(160deg,#0d1a2bdf,#070e1bdc);border-radius:18px;overflow:hidden;box-shadow:0 14px 50px #0004}.stage{position:relative;min-height:540px;background:radial-gradient(ellipse at 50% 60%,#102f51 0%,#071322 50%,#040912 100%);overflow:hidden}.stage:before{content:"";position:absolute;inset:0;background:linear-gradient(transparent 96%,#1a4260 97%),linear-gradient(90deg,transparent 96%,#1a4260 97%);background-size:32px 32px;opacity:.14;mask-image:linear-gradient(transparent,#000)}#scene{position:absolute;inset:0;width:100%;height:100%;display:block}.stageTop{position:absolute;top:14px;left:14px;right:14px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}.livepill{background:#9e1748;color:#fff;padding:6px 10px;border-radius:8px;font-weight:800;font-size:11px;letter-spacing:.08em}.status{font-size:11px;color:#b8d9f1;background:#06101dcc;padding:6px 9px;border:1px solid #23435b;border-radius:9px}.stageBottom{position:absolute;bottom:14px;left:14px;right:14px;display:flex;justify-content:space-between;align-items:end;gap:12px;pointer-events:none}.charName{font-size:22px;font-weight:850;text-shadow:0 2px 18px #1acaff}.charSub{color:#a9c6de;font-size:12px}.say{max-width:55%;padding:10px 12px;border:1px solid #27587b;background:#071525d9;border-radius:13px;font-size:12px;text-align:right;box-shadow:0 0 25px #0af2}.under{padding:12px;display:flex;gap:8px;flex-wrap:wrap}.under button{flex:1;min-width:100px}.section{padding:15px;border-bottom:1px solid #142941}.section:last-child{border-bottom:0}h2{font-size:14px;letter-spacing:.06em;text-transform:uppercase;margin:0 0 12px;color:#bcecff}.forms{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.forms button{padding:8px 4px;font-size:11px;line-height:1.3}.forms .emoji{display:block;font-size:22px;margin-bottom:4px}.row{display:flex;gap:8px;align-items:center}.row>*{min-width:0}.row input,.row select{flex:1}.field{display:block;color:var(--muted);font-size:12px;margin:10px 0 5px}input,select,textarea{width:100%;border:1px solid #29435e;background:#050d19;color:var(--text);padding:10px;border-radius:10px;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--cyan)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.giftButtons{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.giftButtons button{padding:10px 4px;font-size:12px}.log{height:145px;overflow:auto;background:#050b14;border:1px solid #192c43;border-radius:10px;padding:8px;font-size:12px;color:#bad2e9}.log p{margin:0 0 7px}.small{font-size:11px;color:var(--muted);line-height:1.5}.note{padding:10px 12px;margin:0 14px 14px;border:1px solid #694c2c;background:#241a0b;color:#f5d8a6;border-radius:12px;font-size:12px;line-height:1.5}.footer{max-width:1200px;margin:0 auto;padding:0 14px 22px;color:#6f89a5;font-size:11px;text-align:center}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.stage{min-height:58vh;min-height:540px}header{align-items:flex-start}.tag{white-space:normal;text-align:center;max-width:120px}.forms{grid-template-columns:repeat(4,1fr)}}@media(max-width:380px){.stage{min-height:490px}.say{font-size:10px}.charName{font-size:18px}}
 </style>
 </head>
 <body>
-<main class="stage">
-  <div class="top"><div class="brand">NEON NPC LAB</div><div class="live">● LIVE MODE · DEMO</div></div>
-  <h1>NPC LOCO LIVE</h1>
-  <p class="sub">Un robot con cero estabilidad emocional 🤖</p>
-  <div class="avatar-zone">
-    <div class="halo"></div>
-    <div class="avatar" id="avatar" aria-label="Robot animado">
-      <div class="antenna"></div>
-      <div class="ear left"></div><div class="ear right"></div>
-      <div class="head">
-        <div class="face">
-          <div class="eye left"></div><div class="eye right"></div>
-          <div class="cheek left"></div><div class="cheek right"></div>
-          <div class="mouth" id="mouth"></div>
-        </div>
-      </div>
-      <div class="neck"></div>
-      <div class="bodybot"><div class="chest">⚡</div></div>
-      <div class="arm left"></div><div class="arm right"></div>
-    </div>
-    <div class="platform"></div>
-  </div>
-  <div class="speech" id="speech">¡Chat, activen ese caos! Estoy listo.</div>
-  <div class="status" id="status">DEMO: usa los botones para simular regalos</div>
-  <div class="controls">
-    <button onclick="gift('rose')">🌹 Rosa</button>
-    <button onclick="gift('heart')">💖 Corazón</button>
-    <button onclick="gift('big')">🎁 Regalo grande</button>
-    <button onclick="gift('chaos')">💥 Modo caos</button>
-    <button class="secondary" onclick="toggleVoice()" id="voiceBtn">🔊 Voz: activada</button>
-    <button class="secondary" onclick="stopVoice()">⏹ Detener voz</button>
-  </div>
-  <p class="note">Prototipo visual para probar animación y voz del navegador. Los botones simulan regalos; todavía no está conectado a los regalos reales de TikTok LIVE.</p>
+<header><div><h1>NEBULA <span style="color:var(--cyan)">NPC LIVE</span></h1><p>Personaje 3D interactivo · prototipo de lanzamiento</p></div><span class="tag">3D EN TIEMPO REAL</span></header>
+<main class="layout">
+<section class="panel">
+<div class="stage" id="stage"><canvas id="scene" aria-label="Personaje 3D animado"></canvas><div class="stageTop"><span class="livepill">● LIVE SIMULADO</span><span class="status" id="status">Preparando motor 3D…</span></div><div class="stageBottom"><div><div class="charName" id="formName">ROBOT</div><div class="charSub" id="formSub">Forma inicial · Núcleo azul</div></div><div class="say" id="speechBubble">¡Hola! Soy tu NPC. Regálame energía para evolucionar.</div></div></div>
+<div class="under"><button class="primary" id="salute">👋 Saludar</button><button id="dance">🕺 Bailar</button><button id="surprise">✨ Sorpresa</button><button id="reset">↻ Reiniciar</button></div>
+<div class="section"><h2>Transformaciones</h2><div class="forms">
+<button class="active" data-form="0"><span class="emoji">🤖</span>Robot</button><button data-form="1"><span class="emoji">👽</span>Alienígena</button><button data-form="2"><span class="emoji">👹</span>Monstruo</button><button data-form="3"><span class="emoji">🌌</span>Cósmico</button>
+</div><p class="small">En esta versión puedes probar todas las formas. En una integración real, las formas especiales se desbloquean con eventos confirmados de regalos.</p></div>
+</section>
+<aside class="panel">
+<div class="section"><h2>Probar regalos</h2><div class="giftButtons">
+<button data-gift="Rosa" data-emoji="🌹">🌹 Rosa</button><button data-gift="Corazón" data-emoji="💖">💖 Corazón</button><button data-gift="Regalo" data-emoji="🎁">🎁 Regalo</button><button data-gift="Cohete" data-emoji="🚀">🚀 Cohete</button><button data-gift="Corona" data-emoji="👑">👑 Corona</button><button data-gift="Universo" data-emoji="🌌" data-special="1">🌌 Universo</button>
+</div><label class="field">Otro regalo (nombre)</label><div class="row"><input id="giftName" placeholder="Ej. León" maxlength="40"><input id="giftQty" type="number" min="1" max="9999" value="1" style="max-width:84px"><button id="sendGift">Enviar</button></div><label class="field">Nombre de quien regala</label><input id="gifter" maxlength="32" placeholder="Ej. @usuario"></div>
+<div class="section"><h2>Chat de prueba</h2><label class="field">Mensaje</label><div class="row"><input id="chatInput" placeholder="Ej. salúdame Rodrigo" maxlength="180"><button id="sendChat">Enviar</button></div><p class="small">Reconoce saludos, “di mi nombre”, “baila” y menciones de usuarios en esta demo.</p></div>
+<div class="section"><h2>Voz del personaje</h2><label class="field">Voz disponible en tu dispositivo</label><select id="voice"><option value="">Voz predeterminada</option></select><div class="grid2"><div><label class="field">Velocidad</label><input id="rate" type="range" min=".75" max="1.25" step=".05" value="1"></div><div><label class="field">Volumen</label><input id="volume" type="range" min="0" max="1" step=".1" value=".9"></div></div><label style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:12px"><input id="voiceOn" type="checkbox" checked style="width:auto"> Hablar en voz alta</label></div>
+<div class="section"><h2>Actividad</h2><div class="log" id="log" aria-live="polite"><p>• Demo lista. Los regalos todavía son simulados.</p></div><button id="clearLog" style="margin-top:8px">Limpiar actividad</button></div>
+</aside>
 </main>
+<div class="note"><b>Antes de monetizar:</b> esta página ya incluye personaje 3D procedural y controles de prueba, pero no está conectada a TikTok LIVE. Para reaccionar a regalos reales se necesita un conector de eventos compatible, pruebas con la cuenta y cumplir las reglas de TikTok. No introduzcas contraseñas ni cookies de TikTok en esta página.</div>
+<div class="footer">Prototipo web · Three.js · El navegador necesita conexión a internet para cargar el motor 3D.</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-let voiceOn=true, timer=null;
-const avatar=document.getElementById('avatar'), mouth=document.getElementById('mouth');
-const speechBox=document.getElementById('speech'), statusBox=document.getElementById('status');
-const scripts={
- rose:{text:"¡Una rosa! ¡Con esto me compro medio tornillo nuevo!",face:"dance",status:"🌹 REGALO DE PRUEBA · ROSA"},
- heart:{text:"¡Un corazón! ¡No estoy programado para sentir cosas!",face:"shock",status:"💖 REGALO DE PRUEBA · CORAZÓN"},
- big:{text:"¡¿PERO QUÉ ES ESO?! ¡JEFE FINAL DESBLOQUEADO!",face:"dance",status:"🎁 REGALO DE PRUEBA · GRANDE"},
- chaos:{text:"¡ERROR! ¡DEMASIADA EMOCIÓN! ¡REINICIANDO LA LOCURA!",face:"mad",status:"💥 MODO CAOS ACTIVADO"}
-};
-function speak(text){
- if(!voiceOn || !('speechSynthesis' in window)){statusBox.textContent='Voz no disponible en este navegador';return;}
- window.speechSynthesis.cancel();
- const u=new SpeechSynthesisUtterance(text);
- u.lang='es-MX'; u.rate=1.05; u.pitch=1.12; u.volume=1;
- const voices=window.speechSynthesis.getVoices();
- const spanish=voices.find(v=>/^es(-|_)/i.test(v.lang) && /Mexico|United States|Latin|España|Spanish/i.test(v.name+' '+v.lang)) || voices.find(v=>/^es/i.test(v.lang));
- if(spanish)u.voice=spanish;
- u.onstart=()=>mouth.classList.add('talk');
- u.onend=()=>mouth.classList.remove('talk');
- u.onerror=()=>mouth.classList.remove('talk');
- window.speechSynthesis.speak(u);
+(()=>{
+const $=id=>document.getElementById(id);
+const names=['ROBOT','ALIENÍGENA','MONSTRUO','CRIATURA CÓSMICA'];
+const subs=['Forma inicial · Núcleo azul','Primera evolución · Energía verde','Segunda evolución · Modo bestia','Forma final · Energía estelar'];
+const colors=[
+ {main:0xc6d8e9,dark:0x233b55,glow:0x20cfff,eye:0x00c8ff,accent:0xeffaff},
+ {main:0x72d66a,dark:0x183e3c,glow:0x9b61ff,eye:0x6cfbff,accent:0xc4ff84},
+ {main:0x422d68,dark:0x15132c,glow:0xff35b5,eye:0xff4d9d,accent:0x9d5aff},
+ {main:0x26275f,dark:0x080f2c,glow:0x52e9ff,eye:0xc18bff,accent:0xff5ef1}
+];
+let scene,camera,renderer,root,head,body,armL,armR,legL,legR,eyes=[],rings=[],particles=[],core,form=0,action='idle',actionUntil=0,last=0,clock=new THREE.Clock();
+const status=$('status');
+function mat(color,metalness=.55,roughness=.3,emissive=0,ei=0){return new THREE.MeshStandardMaterial({color,metalness,roughness,emissive,emissiveIntensity:ei})}
+function mesh(geo,material,parent,x=0,y=0,z=0){const m=new THREE.Mesh(geo,material);m.position.set(x,y,z);parent.add(m);return m}
+function group(parent,x=0,y=0,z=0){const g=new THREE.Group();g.position.set(x,y,z);parent.add(g);return g}
+function sphere(parent,r,material,x,y,z,sx=1,sy=1,sz=1){let m=mesh(new THREE.SphereGeometry(r,20,14),material,parent,x,y,z);m.scale.set(sx,sy,sz);return m}
+function box(parent,x,y,z,sx,sy,sz,material,bevel=false){let geo=new THREE.BoxGeometry(sx,sy,sz);return mesh(geo,material,parent,x,y,z)}
+function cylinder(parent,r1,r2,h,material,x,y,z,rot=0){let m=mesh(new THREE.CylinderGeometry(r1,r2,h,16),material,parent,x,y,z);m.rotation.z=rot;return m}
+function torus(parent,r,t,material,x,y,z,rx=0,ry=0,rz=0){let m=mesh(new THREE.TorusGeometry(r,t,8,40),material,parent,x,y,z);m.rotation.set(rx,ry,rz);rings.push(m);return m}
+function clearGroup(g){while(g.children.length){let o=g.children.pop();if(o.geometry)o.geometry.dispose();if(o.material&&o.material.dispose)o.material.dispose()}}
+function buildCharacter(){
+ if(root){scene.remove(root);clearGroup(root)}
+ root=group(scene);eyes=[];rings=[];
+ const c=colors[form],armor=mat(c.main,.78,.25),dark=mat(c.dark,.7,.3),glow=mat(c.glow,.35,.2,c.glow,.8),eye=mat(c.eye,.2,.14,c.eye,1.5),accent=mat(c.accent,.7,.22,c.accent,.25);
+ // torso and chest plates
+ body=group(root,0,0,0);
+ box(body,0,0.15,0,.92,1.18,.48,armor);
+ box(body,0,.48,.265,.68,.34,.08,accent);
+ box(body,0,-.05,.28,.52,.42,.08,dark);
+ core=sphere(body,.16,glow,0,.12,.36,1,1,.45);
+ torus(body,.22,.035,eye,0,.12,.37,0,0,0);
+ // waist
+ box(body,0,-.58,0,.65,.22,.4,dark);
+ // shoulder and arms; pivots
+ armL=group(root,-.66,.42,0);armR=group(root,.66,.42,0);
+ for(const [a,side] of [[armL,-1],[armR,1]]){
+  sphere(a,.22,armor,0,0,0,1,1,.9);
+  cylinder(a,.13,.18,.48,armor,0,-.34,0,side*.12);
+  sphere(a,.16,dark,side*.12,-.61,0);
+  cylinder(a,.10,.13,.32,accent,side*.12,-.82,0,side*.08);
+  sphere(a,.14,armor,side*.12,-1.02,0,1,.75,.75);
+  for(let i=0;i<3;i++) cylinder(a,.035,.04,.15,glow,side*.12+(i-1)*.055,-1.12,.04,0);
+ }
+ // hips and legs
+ legL=group(root,-.25,-.68,0);legR=group(root,.25,-.68,0);
+ for(const [l,s] of [[legL,-1],[legR,1]]){
+  sphere(l,.14,dark,0,0,0);box(l,0,-.29,0,.27,.48,.32,armor);sphere(l,.12,glow,0,-.3,.17,.8,.8,.35);
+  box(l,0,-.61,.08,.34,.17,.48,dark);box(l,0,-.59,.28,.22,.05,.12,accent);
+ }
+ // head pivot
+ head=group(root,0,1.04,0);
+ const headShape= form===2 ? new THREE.SphereGeometry(.55,20,16) : new THREE.SphereGeometry(.52,24,18);
+ let h=mesh(headShape,armor,head,0,.25,0);h.scale.set(form===1?1.1:1,form===2?.92:1.02,.72);
+ // face plate
+ box(head,0,.22,.37,.78,.43,.14,dark);
+ // eyes
+ const eyeY=.27, eyeX=form===1?.22:.19;
+ for(const x of [-eyeX,eyeX]){
+  let e=sphere(head,form===2?.105:.085,eye,x,eyeY,.46,form===1?1.1:1,form===2?1.3:1,.5);eyes.push(e);
+  if(form!==2)sphere(head,.025,accent,x-.02,eyeY+.025,.49,1,1,.5);
+ }
+ // forehead crest / alien antennae / monster horns / cosmic crown
+ if(form===0){box(head,0,.76,0,.45,.1,.3,accent);sphere(head,.08,glow,0,.82,.04)}
+ if(form===1){for(const x of [-.29,.29]){cylinder(head,.035,.025,.32,accent,x,.78,0,x<0?-.22:.22);sphere(head,.075,glow,x,.95,0)}}
+ if(form===2){for(const x of [-.34,.34]){let horn=mesh(new THREE.ConeGeometry(.13,.48,10),accent,head,x,.79,0);horn.rotation.z=x<0?.5:-.5} box(head,0,-.03,.46,.52,.1,.12,glow)}
+ if(form===3){for(let i=0;i<5;i++){let a=(i-2)*.28;let cr=mesh(new THREE.ConeGeometry(.09,.3+(.2-Math.abs(a))*.6,8),accent,head,a,.82-Math.abs(a)*.3,0);cr.rotation.z=-a*.8}}
+ // side head details
+ for(const x of [-.52,.52]){sphere(head,.12,accent,x,.23,0,1,.7,.8);torus(head,.12,.025,glow,x,.23,.02,0,Math.PI/2,0)}
+ // back halo and floating energy rings
+ torus(root,.7,.025,glow,0,.3,-.28,Math.PI/2,0,0);
+ torus(root,.48,.018,accent,0,-.2,-.3,Math.PI/2,0,0);
+ for(let i=0;i<18;i++){const p=sphere(root,.018+Math.random()*.025,i%2?glow:accent,(Math.random()-.5)*2.5,Math.random()*2.7-1.1,(Math.random()-.5)*.9-.3);particles.push({mesh:p,phase:Math.random()*6.28,base:p.position.clone()})}
+ // height proportions
+ root.position.y=-.1;
 }
-function gift(type){
- const s=scripts[type]; if(!s)return;
- avatar.classList.remove('dance','shock','mad');
- void avatar.offsetWidth;
- avatar.classList.add(s.face);
- speechBox.textContent=s.text;statusBox.textContent=s.status;
- speak(s.text);
- clearTimeout(timer);timer=setTimeout(()=>avatar.classList.remove('dance','shock','mad'),2600);
+function init(){
+ if(!window.THREE){status.textContent='No cargó Three.js';$('speechBubble').textContent='Revisa tu conexión a internet y recarga.';return}
+ try{
+ scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x050b16,.045);
+ camera=new THREE.PerspectiveCamera(34,1,.1,100);camera.position.set(0,1.1,7.6);camera.lookAt(0,.15,0);
+ renderer=new THREE.WebGLRenderer({canvas:$('scene'),alpha:true,antialias:false,powerPreference:'low-power'});
+ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));renderer.setSize($('stage').clientWidth,$('stage').clientHeight,false);
+ renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
+ scene.add(new THREE.HemisphereLight(0x9edfff,0x121027,1.4));
+ const key=new THREE.DirectionalLight(0xffffff,2.2);key.position.set(3,5,5);scene.add(key);
+ const rim=new THREE.PointLight(0x16caff,3,8);rim.position.set(-3,2,2);scene.add(rim);
+ const pink=new THREE.PointLight(0x9b38ff,2,7);pink.position.set(3,0,-2);scene.add(pink);
+ // floor glow
+ let floor=mesh(new THREE.CircleGeometry(1.5,48),new THREE.MeshBasicMaterial({color:0x0a3a5b,transparent:true,opacity:.42,side:THREE.DoubleSide}),scene,0,-1.55,0);floor.rotation.x=-Math.PI/2;floor.scale.set(1.25,1,1);
+ buildCharacter();onResize();animate();status.textContent='Motor 3D activo';log('Motor 3D listo. Prueba una reacción.');populateVoices();
+ }catch(e){status.textContent='Error al iniciar 3D';log('No se pudo iniciar WebGL: '+e.message)}
 }
-function toggleVoice(){voiceOn=!voiceOn;document.getElementById('voiceBtn').textContent=voiceOn?'🔊 Voz: activada':'🔇 Voz: apagada';if(!voiceOn)stopVoice();else statusBox.textContent='Voz activada · prueba un regalo';}
-function stopVoice(){if('speechSynthesis' in window)window.speechSynthesis.cancel();mouth.classList.remove('talk');}
-if('speechSynthesis' in window)window.speechSynthesis.getVoices();
+function onResize(){if(!renderer)return;let w=$('stage').clientWidth,h=$('stage').clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}
+function animate(t){
+ requestAnimationFrame(animate);if(!renderer||!root)return;
+ const time=(t||0)*.001,dt=Math.min(.04,clock.getDelta());
+ root.position.y=-.1+Math.sin(time*1.7)*.045;
+ root.rotation.y=Math.sin(time*.55)*.16;
+ head.rotation.y=Math.sin(time*.9)*.08;
+ armL.rotation.z=Math.sin(time*1.4)*.045;armR.rotation.z=-Math.sin(time*1.4)*.045;
+ if(action==='salute'){armR.rotation.z=-2.15+Math.sin(time*12)*.2;armR.rotation.x=.2;if(time>actionUntil)action='idle'}
+ else if(action==='dance'){root.rotation.y=Math.sin(time*8)*.55;root.position.y=-.1+Math.abs(Math.sin(time*8))*.15;armL.rotation.z=-.9+Math.sin(time*8)*.5;armR.rotation.z=.9-Math.sin(time*8)*.5;if(time>actionUntil)action='idle'}
+ else if(action==='surprise'){head.rotation.x=Math.sin(time*15)*.12;armL.rotation.z=-.9;armR.rotation.z=.9;if(time>actionUntil)action='idle'}
+ else if(action==='gift'){root.scale.setScalar(1+Math.max(0,Math.sin(time*14))*.07);if(time>actionUntil){root.scale.setScalar(1);action='idle'}}
+ rings.forEach((r,i)=>{r.rotation.z=time*(i%2?-.4:.35);});
+ particles.forEach(p=>{p.mesh.position.y=p.base.y+Math.sin(time*1.4+p.phase)*.12;p.mesh.position.x=p.base.x+Math.sin(time*.7+p.phase)*.05});
+ renderer.render(scene,camera)
+}
+function log(s){const p=document.createElement('p');p.textContent='• '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+' '+s;$('log').prepend(p);while($('log').children.length>35)$('log').lastChild.remove()}
+function say(text){$('speechBubble').textContent=text;if(!$('voiceOn').checked||!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='es-ES';u.rate=+$('rate').value;u.volume=+$('volume').value;const v=window.speechSynthesis.getVoices();const chosen=$('voice').value;if(chosen){const voice=v.find(x=>x.name===chosen);if(voice)u.voice=voice}window.speechSynthesis.speak(u)}
+function setAction(a,duration=1.8){action=a;actionUntil=performance.now()*.001+duration;if(root)root.scale.setScalar(1);if(a==='salute')say('¡Hola! Qué bueno verte por aquí.');if(a==='dance')say('¡Vamos a bailar!');if(a==='surprise')say('¡Wow! No me lo esperaba.')}
+function setForm(n){form=n;document.querySelectorAll('[data-form]').forEach(b=>b.classList.toggle('active',+b.dataset.form===n));buildCharacter();$('formName').textContent=names[n];$('formSub').textContent=subs[n];if(n===1)say('¡Evolución desbloqueada! Ahora soy alienígena.');if(n===2)say('¡Modo monstruo activado!');if(n===3)say('Forma cósmica desbloqueada. ¡Energía máxima!');if(n===0)say('Volvemos a la forma robot.');log('Transformación: '+names[n])}
+function gift(name,qty=1,who='alguien',special=false){
+ qty=Math.max(1,Math.min(9999,Number(qty)||1));const emoji=({'Rosa':'🌹','Corazón':'💖','Regalo':'🎁','Cohete':'🚀','Corona':'👑','Universo':'🌌'})[name]||'🎁';
+ action='gift';actionUntil=performance.now()*.001+1.8;
+ let msg;
+ if(/universo|lion|león|leon|galaxy|galaxia|tiktok universe/i.test(name)||special){setForm(Math.min(3,Math.max(form,form+1)));msg=`${emoji} ¡${who} me envió ${qty} ${name}! ¡Transformación especial!`}
+ else if(/cohete|rocket|corona/i.test(name)){msg=`${emoji} ¡${who} me envió ${qty} ${name}! ¡Esto se puso épico!`;setAction('surprise',1.5)}
+ else if(/corazón|corazon/i.test(name)){msg=`${emoji} ¡Gracias ${who} por el cariño! Me llenas de energía.`}
+ else if(/rosa/i.test(name)){msg=`${emoji} ¡Gracias ${who} por ${qty} ${name}${qty>1?'s':''}! Qué detalle.`}
+ else msg=`${emoji} ¡Gracias ${who} por ${qty} ${name}!`;
+ say(msg);log(msg)
+}
+function populateVoices(){if(!('speechSynthesis'in window))return;function load(){const sel=$('voice'),old=sel.value;sel.innerHTML='<option value="">Voz predeterminada</option>';speechSynthesis.getVoices().filter(v=>/^es/i.test(v.lang)).forEach(v=>{let o=document.createElement('option');o.value=v.name;o.textContent=v.name+' ('+v.lang+')';sel.append(o)});sel.value=old}load();speechSynthesis.onvoiceschanged=load}
+document.querySelectorAll('[data-form]').forEach(b=>b.addEventListener('click',()=>setForm(+b.dataset.form)));
+document.querySelectorAll('[data-gift]').forEach(b=>b.addEventListener('click',()=>gift(b.dataset.gift,1,$('gifter').value.trim()||'alguien',b.dataset.special==='1')));
+$('sendGift').onclick=()=>{const n=$('giftName').value.trim();if(!n){$('giftName').focus();return}gift(n,$('giftQty').value,$('gifter').value.trim()||'alguien',/universo|león|leon|lion|galaxy|galaxia/i.test(n));$('giftName').value=''};
+function chat(text){const t=text.trim(),lo=t.toLowerCase();if(!t)return;log('Chat: '+t);let user=(t.match(/@?[\p{L}\p{N}_]{2,}/u)||['amigo'])[0];if(/sal[uú]dame|manda saludos|saluda a/i.test(lo)){setAction('salute');say(`¡Saludos, ${user.replace('@','')}! Gracias por estar aquí.`)}else if(/di mi nombre|mi nombre/i.test(lo)){say(`¡Claro! Un saludo especial para ${user.replace('@','')}!`);setAction('salute')}else if(/baila|baile|dance/i.test(lo)){setAction('dance')}else if(/cambia|transforma|evoluciona/i.test(lo)){setForm((form+1)%4)}else{say(`Leí tu mensaje, ${user.replace('@','')}. ¡Gracias por el chat!`)}}
+$('sendChat').onclick=()=>{chat($('chatInput').value);$('chatInput').value=''};$('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('sendChat').click()});
+$('salute').onclick=()=>setAction('salute');$('dance').onclick=()=>setAction('dance');$('surprise').onclick=()=>setAction('surprise');
+$('reset').onclick=()=>{setForm(0);action='idle';root.scale.setScalar(1);say('Sistema reiniciado. ¡Listo para el siguiente regalo!')};
+$('clearLog').onclick=()=>$('log').replaceChildren();
+window.addEventListener('resize',onResize);
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
 </script>
-</body>
-</html>
+</body></html>
